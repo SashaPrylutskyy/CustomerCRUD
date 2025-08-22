@@ -29,16 +29,15 @@ public class CustomerController {
         return new ResponseEntity<>(customer, HttpStatus.CREATED);
     }
 
-    @GetMapping//Потрібно було отримати всіх користувачів, чи лише активних?
+    @GetMapping//Отримувати всіх користувачів, чи лише активних?
     public ResponseEntity<List<CustomerResponseDTO>> getAllCustomers() {
-        List<CustomerResponseDTO> customers = service.getAllCustomers();
+        List<CustomerResponseDTO> customers = service.getAllActiveCustomers();
         return ResponseEntity.ok(customers);
     }
 
     @GetMapping("/{id}") //Потрібно повертати користувача лише, якщо він активний?
     public ResponseEntity<CustomerResponseDTO> getCustomerById(@PathVariable Long id) {
-        Customer customer = service.getCustomerById(id);
-        return ResponseEntity.ok(CustomerMapper.toResponse(customer));
+        return ResponseEntity.ok(service.getActiveCustomerById(id));
     }
 
     @PutMapping("/{id}")

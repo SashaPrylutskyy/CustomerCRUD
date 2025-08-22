@@ -38,9 +38,23 @@ public class CustomerService {
                 .toList();
     }
 
-    public Customer getCustomerById(Long id) {
+    public List<CustomerResponseDTO> getAllActiveCustomers() {
+        return repo.findAllActiveCustomers().stream()
+                .map(CustomerMapper::toResponse)
+                .toList();
+    }
+
+    private Customer getCustomerById(Long id) {
         return repo.findById(id)
                 .orElseThrow(() -> new NoResultException(String.format("Customer N.%d is not found.", id)));
+    }
+
+    public CustomerResponseDTO getActiveCustomerById(Long id) {
+        Customer customer = getCustomerById(id);
+        if (!customer.isActive()) {
+            throw new RuntimeException(String.format("Customer N.%d is deleted.", id));
+        }
+        return CustomerMapper.toResponse(customer);
     }
 
     public CustomerResponseDTO updateCustomer(@Valid CustomerRequestDTO dto, Long urlId) throws AccessDeniedException {

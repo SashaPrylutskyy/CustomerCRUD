@@ -7,11 +7,6 @@ import com.sashaprylutskyy.customercrud.model.entity.Customer;
 public class CustomerMapper {
 
     public static Customer toEntity(CustomerRequestDTO dto) {
-        /* customer.setId(dto.getId());
-        customer.setFullName(dto.getFullName());
-        customer.setEmail(dto.getEmail());
-        customer.setPhone(dto.getPhone());*/
-
         return new Customer(
                 dto.getId(),
                 dto.getFullName(),

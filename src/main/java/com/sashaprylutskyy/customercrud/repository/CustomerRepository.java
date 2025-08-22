@@ -10,7 +10,6 @@ import java.util.List;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
-    //якщо потрібно отримати всіх активних користувачів при GET:/api/customers
     @Query("SELECT c from Customer c where c.isActive = true")
     List<Customer> findAllActiveCustomers();
 }
