@@ -29,13 +29,13 @@ public class CustomerController {
         return new ResponseEntity<>(customer, HttpStatus.CREATED);
     }
 
-    @GetMapping//Отримувати всіх користувачів, чи лише активних?
+    @GetMapping
     public ResponseEntity<List<CustomerResponseDTO>> getAllCustomers() {
         List<CustomerResponseDTO> customers = service.getAllActiveCustomers();
         return ResponseEntity.ok(customers);
     }
 
-    @GetMapping("/{id}") //Потрібно повертати користувача лише, якщо він активний?
+    @GetMapping("/{id}")
     public ResponseEntity<CustomerResponseDTO> getCustomerById(@PathVariable Long id) {
         return ResponseEntity.ok(service.getActiveCustomerById(id));
     }
@@ -48,8 +48,8 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteCustomerById(@PathVariable Long id) {
-        service.deleteCustomerById(id);
-        return ResponseEntity.ok(String.format("Customer N.%d is deleted successfully", id));
+    public ResponseEntity<String> deactivateCustomerById(@PathVariable Long id) {
+        service.deactivateCustomerById(id);
+        return ResponseEntity.ok(String.format("Customer N.%d is successfully deactivated", id));
     }
 }

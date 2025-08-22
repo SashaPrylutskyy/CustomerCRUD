@@ -45,4 +45,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleRuntimeException(RuntimeException e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
     }
+
+    @ExceptionHandler(InactiveCustomerException.class)
+    public ResponseEntity<Map<String, String>> handleInactiveCustomerException(InactiveCustomerException e) {
+        return ResponseEntity.status(HttpStatus.GONE).body(Map.of("error", e.getMessage()));
+    }
 }

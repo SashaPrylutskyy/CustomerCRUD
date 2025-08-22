@@ -1,5 +1,6 @@
 package com.sashaprylutskyy.customercrud.service;
 
+import com.sashaprylutskyy.customercrud.exception.InactiveCustomerException;
 import com.sashaprylutskyy.customercrud.model.dto.CustomerRequestDTO;
 import com.sashaprylutskyy.customercrud.model.dto.CustomerResponseDTO;
 import com.sashaprylutskyy.customercrud.model.entity.Customer;
@@ -44,24 +45,24 @@ public class CustomerService {
                 .toList();
     }
 
-    private Customer getCustomerById(Long id) {
-        return repo.findById(id)
+    private Customer getCustomerById(Long id, boolean isActive) {
+        Customer customer = repo.findById(id)
                 .orElseThrow(() -> new NoResultException(String.format("Customer N.%d is not found.", id)));
+        if (isActive && !customer.isActive()) {
+            throw new InactiveCustomerException(String.format("Customer N.%d is deactivated.", id));
+        }
+        return customer;
     }
 
     public CustomerResponseDTO getActiveCustomerById(Long id) {
-        Customer customer = getCustomerById(id);
-        if (!customer.isActive()) {
-            throw new RuntimeException(String.format("Customer N.%d is deleted.", id));
-        }
-        return CustomerMapper.toResponse(customer);
+        return CustomerMapper.toResponse(getCustomerById(id, true));
     }
 
     public CustomerResponseDTO updateCustomer(@Valid CustomerRequestDTO dto, Long urlId) throws AccessDeniedException {
         if (!Objects.equals(dto.getId(), urlId)) {
             throw new AccessDeniedException("Access denied: path id and user id don't match.");
         }
-        Customer customer = getCustomerById(dto.getId());
+        Customer customer = getCustomerById(dto.getId(), true);
 
         customer.setFullName(dto.getFullName());
         customer.setPhone(dto.getPhone());
@@ -71,8 +72,8 @@ public class CustomerService {
         return CustomerMapper.toResponse(customer);
     }
 
-    public void deleteCustomerById(Long id) {
-        Customer customer = getCustomerById(id);
+    public void deactivateCustomerById(Long id) {
+        Customer customer = getCustomerById(id, true);
         customer.setActive(false);
         repo.save(customer);
     }
